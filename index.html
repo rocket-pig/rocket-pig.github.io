@@ -1,0 +1,543 @@
+<html><head>
+
+<!-- PWA Headers -->
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="application-name" content="Hullo" />
+<meta name="apple-mobile-web-app-title" content="Hullo" />
+<meta name="msapplication-starturl" content="/index.html" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+<!-- disable caching -->
+<meta http-equiv="cache-control" content="max-age=0" />                                                     <meta http-equiv="cache-control" content="no-cache" /><meta http-equiv="expires" content="0" />             <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />                                        <meta http-equiv="pragma" content="no-cache" />       
+
+
+<script src="/js/eruda.min.js"></script>
+<script>eruda.init();</script>
+
+<!--<script src="/startworker.js"></script>-->
+
+<script src="/js/jquery.js"></script>
+
+
+<script src="/lib/pica.min.js"></script>
+<script src="/lib/image-blob-reduce.min.js"></script>
+
+<link id="maintheme" rel="stylesheet" href="/lib/onsen/css/dark-onsen-css-components.css">
+
+<link rel="stylesheet" href="/lib/onsen/css/material-design-iconic-font/css/material-design-iconic-font.css">
+
+<link rel="stylesheet" href="/lib/onsen/css/font_awesome/css/all.css">
+
+<link rel="stylesheet" href="/lib/onsen/css/ionicons/css/ionicons.css">
+
+<link rel="/lib/onsen/css/material-design-iconic-font/css/material-design-iconic-font.css">
+
+
+
+  <script src="/lib/onsen/js/onsenui.js"></script>
+
+
+
+
+</head>
+
+
+<body>  <!-- ur body is a wonderland -->  
+
+  <ons-navigator id="myNavigator" page="index.html">
+  </ons-navigator>
+
+
+<template id="index.html"> <!-- main view-->
+
+
+<ons-page id="indexPage">
+<ons-toolbar class="toolbar">
+  <div class="left toolbar__left">
+        <ons-toolbar-button id="savetostorage_button">
+        <ons-icon icon="fa-bars"></ons-icon>
+        </ons-toolbar-button>
+        <ons-toolbar-button id="roomconfig_button">
+        <ons-icon icon="fa-star"></ons-icon>
+        </ons-toolbar-button>
+
+        
+</div>
+  <div class="center toolbar__center">Serverless</div>
+  <div class="right toolbar__right"></div>
+</ons-toolbar>
+
+
+<div id="content" class="content" style="overflow:scroll">
+<div id="container" class="container"></div>
+
+</div>
+<ons-bottom-toolbar modifier="aligned">
+<div class="left" style="padding-top:20px;padding-left:20px;float:left">
+    <ons-input id="input" modifier="material transparent" type="text"></ons-input>
+</div>
+<div class="center"></div>
+<div class="right" style="padding-top:20px;padding-left:20px;float:right">
+    <ons-toolbar-button icon="fa-plus-circle" onclick= "document.querySelector('#uploader').click()"></ons-toolbar-button>
+    <ons-toolbar-button icon="fa-paper-plane"></ons-toolbar-button>
+</div>
+</ons-bottom-toolbar>
+
+<input id="uploader" style="display:none;" type="file">
+<div id="result" style="display:none"></div>
+</ons-page>
+</template>
+
+
+<script>
+    function createRoomCallback(){
+        for(let i of ["appID","myID","roomID","password"]) {
+            localStorage.setItem(i,document.querySelector("#"+i).value)
+        }
+        document.querySelector("#roomconfig_dialog").hide();
+    }
+</script>
+
+
+<!-- Dialog -->
+  <ons-dialog modifer="material" id="roomconfig_dialog" cancelable>
+    <div style="text-align:left; padding: 10px;">
+        To join/create a new room, fill out the fields below.  
+        In order: Username, appID, roomID, encryption password.
+        
+    <ul class="list">
+            <li class="list-item">
+               
+    <div class="list-item__center">
+      <input id="myID" type="text" class="text-input" placeholder="Choose your screen name">
+    </div>
+    </li>
+<li class="list-item">
+    <div class="list-item__center">
+      <input id="appID" type="text" class="text-input" placeholder="appID">
+    </div></li>
+<li class="list-item">
+    <div class="list-item__center">
+      <input id="roomID" type="text" class="text-input" placeholder="roomID">
+    </div></li>
+<li class="list-item">
+    <div class="list-item__center">
+      <input id="password" type="text" class="text-input" placeholder="Encryption password">
+    </div></li>
+
+</ul>
+
+
+
+
+      <p><ons-button id="Save" onclick="createRoomCallback()">Save</ons-button>
+      
+      <script>document.querySelector("#Save").removeAttribute("ripple")</script>
+
+      <ons-button id="Cancel" onclick="document.querySelector('#roomconfig_dialog').hide()">Cancel</ons-button>
+      
+      <script>document.querySelector("#Cancel").removeAttribute("ripple")</script>
+      
+</p>
+</div>
+</ons-dialog>
+
+
+
+
+
+<script>
+
+// "Controllers" area.
+window.myApp = {};
+document.addEventListener('init', function(event) {
+  var page = event.target;
+  if (page.id === 'indexPage') {
+    //theme selector eventually:
+document.querySelector("#maintheme").href="lib/onsen/css/dark-onsen-css-components.css"; 
+
+//click button for config dialog
+document.querySelector("#roomconfig_button").addEventListener("click", function() {
+    //pre-fill current settings
+    for(let i of ["appID","myID","roomID","password"]) {
+            document.querySelector("#"+i).value=localStorage.getItem(i)
+    }
+    document.querySelector("#roomconfig_dialog").show();
+});
+
+//Enter sends input
+document.addEventListener('keydown', (event) => {
+  if (event.keyCode === 13) {
+      //alert('got ENTER')
+    send(document.querySelector("#input").value);
+    document.querySelector("#input").value=""
+  }
+});
+
+} //end of indexPage
+  
+}); //end of addEventListener.
+
+</script>
+
+
+<!--The 'backend' of no-backend -->
+<script type='module'>
+
+
+import {joinRoom} from "/lib/trystero/torrent.js"
+import {s as selfId} from "/lib/common/crypto.js"
+
+//set room params from storage
+
+var appID; var roomID; var password; var myID;
+
+if (localStorage.getItem("appID") === null) {
+  console.log("appID not set")
+  appID = "welcome"
+  roomID = "welcome"
+  } else { 
+    appID = localStorage.appID
+    myID = localStorage.myID
+    roomID = localStorage.roomID
+    password = localStorage.password
+  }
+
+//join room, set actions
+localStorage.visible = "0"
+const config = {appId: appID}
+const room = joinRoom(config, roomID, password)
+const [sendText, getText] = room.makeAction('text')
+const [sendReq, recvReq] = room.makeAction('update')
+const [sendName, getName] = room.makeAction('name')
+
+        
+function deleteallmsgs(){
+    //guess what this does
+    let ar = Reflect.ownKeys(localStorage)
+    for(let i of ar) { 
+        if(i.includes("text_")){ 
+            localStorage.removeItem(i); 
+            
+        };
+    }
+}
+window.d = deleteallmsgs
+
+//update others as they join:
+recvReq((obj,id) => {
+    console.log('HIST: req: '+obj.last)
+    //get all in db matching roomID
+    let array = Reflect.ownKeys(localStorage).filter(key => key.includes(roomID))
+    //reduce to ones w newer timestamp than 'last'
+    //also: sort, descending.
+    if(array.length > 0) {
+        let list = array.filter(key => parseInt(key.split("_")[2]) > obj.last).sort((a, b) => a.split("_")[2] - b.split("_")[2]);
+        //sendit
+        console.log('HIST: found '+list.length+' items, sending...')
+        for(let i of list) {
+        sendText(JSON.parse(localStorage.getItem(i)),id)
+        }
+    } else { console.log('HIST: no matches') }
+}) 
+
+
+function getPrettyTimeStamp() {
+    var date = new Date();
+    var m = date.getMonth();
+    var months =['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    var month = months[m]
+    var day = date.getDate();
+    var hour = date.getHours();
+    var minute = date.getMinutes();
+    var ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    hour = hour ? hour : 12;
+    minute = minute < 10 ? '0' + minute : minute;
+    var strTime = month + ' ' + day + ', ' + hour + ':' + minute + ampm;
+    return strTime;
+}
+
+function getpt(timestamp) {
+  var date = new Date(timestamp * 1000);
+  var monthNames = [
+    "Jan", "Feb", "Mar",
+    "Apr", "May", "Jun", "Jul",
+    "Aug", "Sep", "Oct",
+    "Nov", "Dec"
+  ];
+
+  var day = date.getDate();
+  var monthIndex = date.getMonth();
+  var year = date.getFullYear();
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = monthNames[monthIndex] + ' ' + day + ', ' + hours + ':' + minutes + ampm + ' ' + year;
+  return strTime;
+}
+
+
+//notice everything below is inside window.onload.
+window.onload = function() {
+    
+    if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/worker.js")
+    .then(serviceWorker => {
+      console.log("Service Worker registered: ", serviceWorker);
+      
+      serviceWorker.update();
+      
+    })
+    .catch(error => {
+      console.error("Error registering and updating the Service Worker: ", error);
+    });
+}
+    
+    
+    
+    
+function newCard(obj) {
+    let data = obj.text
+    
+    let parent = document.querySelector("#content")
+    let me = document.createElement("div") //ons-card
+    me.className="card" //was nothing
+    if(obj.myID == localStorage.myID) { me.style.backgroundColor = "grey"
+    }
+    let title = document.createElement("div") //title
+    title.className="card__title" //title
+    title.style.fontSize = "12px"
+
+    if(obj.myID == "announce"){
+        title.innerHTML=""
+        me.style.fontStyle = "italic"
+        } else {
+    title.innerHTML=obj.myID }
+    let content = document.createElement("div")
+    content.className="card__content" //content
+    if(obj.img == true) {
+        //console.log(obj)
+    let img = document.createElement("img")
+    img.src=obj.text
+    content.appendChild(img)
+    } else {
+    content.innerHTML=obj.text
+    }
+    let date = document.createElement("div")
+    date.className="Date"
+    date.innerHTML=obj.pt
+    date.style.textAlign = "right";
+    date.style.fontStyle = "italic";
+    content.appendChild(date)
+    me.appendChild(title)
+    me.appendChild(content)
+    parent.appendChild(me)
+}
+
+
+//if room = 'welcome', send a card
+//about how this prob isnt room you want.
+if(roomID == "welcome") {
+newCard({text:"Hullo. This is the default, unencrypted waiting room. Click the star in the toolbar to join an encrypted room (with the info your friend sent you).",myID:"announce"})
+}
+
+
+//We're getting all saved text_ from storage, limited to ones that match roomID. sorting by timestamp. making new 'cards' to display, and finally adding them to the 'visible' list. Enclosed in an IEAF to limit scope.
+(function(){
+    let ar = Reflect.ownKeys(localStorage).filter(i => i.includes("text_") && i.includes(roomID)).sort((a, b) => a.split("_")[2] - b.split("_")[2]);
+    //console.log(ar.length);
+    ar.forEach(i => {
+        let timestamp = i.split("_")[2]
+        if(i.includes("text_")) {
+        let item = JSON.parse(localStorage.getItem(i));
+        newCard(item);
+        }
+        localStorage.visible += "," + timestamp;
+    });
+})();
+
+
+
+//take these out later:
+window.sendText = sendText
+
+function send(msg,img=false){
+    if (localStorage.myID === undefined) {
+        let myID = "unnamed";
+    } else { let myID = localStorage.myID }
+    
+    newCard({text:msg,pt:getPrettyTimeStamp(),myID:myID,img:img})
+    let lt = Date.now()
+    let obj = {
+    text: msg, 
+    myID: myID,
+    roomID: roomID,
+    pt: getPrettyTimeStamp(),
+    lt: lt,
+    img:img
+    }
+    
+    localStorage.setItem('text_'+obj.roomID+'_'+obj.lt,JSON.stringify(obj))
+    for(let id of room.getPeers()){
+        if(id != 0) {
+            //console.log('sending ['+msg+'] to id: '+id)
+        sendText(obj,id)
+        }
+    }
+
+} //end of send
+
+//take these out later
+window.room = room
+window.config = config
+window.send = send
+
+
+//somebody joined. announce and 
+//hit them up for msg history
+function joincallback(thisPeer) {
+    
+    // introduce ourselves
+    sendName(localStorage.myID, thisPeer)
+
+    //request to update room history from new peer:
+    //get msg in storage w most recent timestamp
+    //TODO: this is bad logic. if 'we' send a msg before seeing missed ones, it becomes our most recent stamp and unseen msgs remain unrequested.
+    let array = Reflect.ownKeys(localStorage)
+    var highest = array.reduce(function(prev, current) {
+      var currentRoomID = current.split("_")[1];
+      var currentTimestamp = current.split("_")[2];
+      if (currentRoomID === roomID && currentTimestamp > prev.split("_")[2]) {
+        return current;
+      } else {
+        return prev;
+      }
+    }, "text_"+roomID+"_0");
+    //req any messages newer
+    highest = highest.split("_")[2]
+    console.log('HIST: sending req: '+highest)
+    sendReq({lt:Date.now(),last:highest},thisPeer)
+}
+
+room.onPeerJoin((thisPeer) => {joincallback(thisPeer)})
+
+
+room.onPeerLeave(peerId => {
+    //announce
+    newCard({text:nombre+" ["+peerID+"] leaves...",pt:getPrettyTimeStamp(), myID:"announce"})
+});
+
+
+
+// listen for peers naming themselves
+const idsToNames = {}
+getName((name, peerId) => {
+    idsToNames[peerId] = name
+    //announce
+    newCard({text:"Peering with "+name+" ["+peerId+"]...",pt:getPrettyTimeStamp(), myID:"announce"})
+})
+
+
+//we received a msg
+getText((obj, peerId) => {
+    
+    //are we currently in the room this message is addressed to?
+    if(obj.roomID == roomID) {                
+    let TS = localStorage.visible.split(",")
+    let NEW = obj.lt.toString()
+    
+    //if we havent already seen this:
+    if (TS.indexOf(NEW) === -1) {
+          localStorage.visible = localStorage.visible+","+NEW
+          //update display
+          newCard(obj)
+          //save hist
+          localStorage.setItem('text_'+obj.roomID+'_'+NEW,JSON.stringify(obj))
+          }
+    }
+
+}); //end of getText
+
+
+
+// handle image uploads    
+(function () {
+  //'use strict';
+
+  var reducer = new window.ImageBlobReduce({
+    pica: window.ImageBlobReduce.pica({ features: [ 'js', 'wasm', 'ww' ] })
+  });
+
+   
+document.getElementById('uploader').addEventListener('change', function () {
+      reducer
+        .toBlob(
+          document.querySelector('input[type=file]').files[0],
+          {
+            max: 330,
+            unsharpAmount: 80,
+            unsharpRadius: 0.6,
+            unsharpThreshold: 2
+          }
+        )
+        .then(function (blob) {
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onload = function(e) {
+              let dURL = reader.result;
+              send(dURL,true)
+            }
+        });
+  });
+
+})();
+
+
+function unusedFoNow() {
+var upload = document.createElement('input');
+upload.setAttribute('type','file');
+upload.addEventListener("change", function () {
+  const file = document.querySelector('input[type=file]').files[0];
+  const reader = new FileReader();
+  reader.addEventListener("load", function () {
+    var arrayBuffer = reader.result;
+   // localStorage.setItem("image_"+roomID+file['name'], arrayBuffer);
+    let mypromise = new Promise(function(resolve, reject) {
+        var blob = dataURItoBlob(arrayBuffer);
+        resolve(blob);
+        });
+    mypromise.then((blob) => 
+      reduceSizeOfImage(blob)).then(() => 
+        makeCardSaveAndSendToOthersEtc 
+        );
+  }, false);
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+}); //end of addEventListener
+
+}
+
+
+
+} //end of window.onload
+
+
+</script>
+
+
+</body>
+</html>

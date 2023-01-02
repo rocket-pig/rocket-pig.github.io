@@ -1,0 +1,21 @@
+{
+  "name": "Hullo",
+  "short_name": "Hullo",
+  "lang": "en",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "icons/logo-192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons/logo-512.png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "icons/logo.svg",
+      "sizes": "513x513"
+    }
+  ]
+}
