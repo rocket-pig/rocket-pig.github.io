@@ -2,17 +2,22 @@
 //"Error:{"columnNumber":-1,"lineNumber":-1,"message":"ServiceWorker startup timed out. The worker was in startup phase: Script streaming.","sourceURL":""}"
 
 const someFiles = ['/','/index.html']
-CACHE_NAME = "V1"
+const CACHE_NAME = "V1"
 
 
 //install 
 self.addEventListener("install", event => {
     console.log('inside install event.')
-      self.skipWaiting();
+      //self.skipWaiting();
 
+// this has been the point of failure for like 6 hrs.
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache =>     cache.addAll(someFiles)).catch(err => { console.log("[Install] cache.addAll: "+err) })
+        caches.open(CACHE_NAME).then(cache =>     cache.addAll(someFiles))
+        
+        
+        //.catch(err => { console.log("[Install] cache.addAll: "+err) })
   );
+
 
   console.log("Service Worker installing.");
 });
