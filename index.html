@@ -306,32 +306,15 @@ window.onload = function() {
         window.sw = serviceWorker;
         // register for changes notification
         serviceWorker.oncontrollerchange = () => {
-    console.log(
-      "[Service Worker] controller is now:",
-      serviceWorker.controller);
-      window.sw = serviceWorker
-    };
+            console.log("[Service Worker] controller is now:",serviceWorker.controller);
+            window.sw = serviceWorker
+            };
     })
     .catch(error => {
       console.error("Error registering and updating the Service Worker: ", error);
     });
-} else { console.log("Error: Service Workers not supported by this browser!") }
+    } else { console.log("Error: Service Workers not supported by this browser!") }
 
-//override the "install this app" toast. would be cool but im sick of battlling with scope of deferredPrompt. 
-/* 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  console.log(`'beforeinstallprompt' event fired, toast suppressed. `);
-//show download button in appbar
-let downloadButton = document.createElement("ons-toolbar-button")
-downloadButton.setAttribute("onclick", "deferredPrompt.prompt(); ")
-downloadButton.icon="fa-download"
-downloadButton.innerHTML = '<ons-icon icon="fa-download"></ons-icon>';
-
-document.querySelector('.right').appendChild(downloadButton)
-});
-*/
 
 
 function newCard(obj) {
@@ -340,7 +323,7 @@ function newCard(obj) {
     let parent = document.querySelector("#content")
     let me = document.createElement("div") //ons-card
     me.className="card" //was nothing
-    if(obj.myID == localStorage.myID) { me.style.backgroundColor = "grey"
+    if(obj.myID == localStorage.myID) { me.style.backgroundColor = "#424242"
     }
     let title = document.createElement("div") //title
     title.className="card__title" //title
@@ -377,7 +360,7 @@ function newCard(obj) {
 //if room = 'welcome', send a card
 //about how this prob isnt room you want.
 if(roomID == "welcome") {
-newCard({text:"Hullo. This is the default, unencrypted waiting room. Click the star in the toolbar to join an encrypted room (with the info your friend sent you).",myID:"announce"})
+newCard({text:"Hullo. This is the default, unencrypted waiting room. Click the star in the toolbar to join/create an encrypted room.",myID:"announce"})
 }
 
 
@@ -389,9 +372,12 @@ newCard({text:"Hullo. This is the default, unencrypted waiting room. Click the s
         let timestamp = i.split("_")[2]
         if(i.includes("text_")) {
         let item = JSON.parse(localStorage.getItem(i));
-        newCard(item);
+        if(item.text != "") {
+            newCard(item);
+            localStorage.visible += "," + timestamp;
+            } else { localStorage.removeItem(i) }
         }
-        localStorage.visible += "," + timestamp;
+        
     });
 })();
 
@@ -501,11 +487,10 @@ getText((obj, peerId) => {
 
 // handle image uploads    
 (function () {
-  //'use strict';
-
-  var reducer = new window.ImageBlobReduce({
-    pica: window.ImageBlobReduce.pica({ features: [ 'js', 'wasm', 'ww' ] })
-  });
+    var reducer = new window.ImageBlobReduce({
+        pica: window.ImageBlobReduce.pica({
+            features: [ 'js', 'wasm', 'ww' ] })
+    });
 
    
 document.getElementById('uploader').addEventListener('change', function () {
@@ -530,33 +515,6 @@ document.getElementById('uploader').addEventListener('change', function () {
   });
 
 })();
-
-
-function unusedFoNow() {
-var upload = document.createElement('input');
-upload.setAttribute('type','file');
-upload.addEventListener("change", function () {
-  const file = document.querySelector('input[type=file]').files[0];
-  const reader = new FileReader();
-  reader.addEventListener("load", function () {
-    var arrayBuffer = reader.result;
-   // localStorage.setItem("image_"+roomID+file['name'], arrayBuffer);
-    let mypromise = new Promise(function(resolve, reject) {
-        var blob = dataURItoBlob(arrayBuffer);
-        resolve(blob);
-        });
-    mypromise.then((blob) => 
-      reduceSizeOfImage(blob)).then(() => 
-        makeCardSaveAndSendToOthersEtc 
-        );
-  }, false);
-  if (file) {
-    reader.readAsDataURL(file);
-  }
-}); //end of addEventListener
-
-}
-
 
 
 } //end of window.onload

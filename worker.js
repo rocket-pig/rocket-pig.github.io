@@ -1,18 +1,16 @@
-//apparently immediately pre caching entire app isnt going to work. No debug tool was telling me anything - finally I found this output at chrome://serviceworker-internals
-//"Error:{"columnNumber":-1,"lineNumber":-1,"message":"ServiceWorker startup timed out. The worker was in startup phase: Script streaming.","sourceURL":""}"
+//chrome://serviceworker-internals: "Error:{"columnNumber":-1,"lineNumber":-1,"message":"ServiceWorker startup timed out. The worker was in startup phase: Script streaming.","sourceURL":""}"
 
-const someFiles = ['/index.html']
 const CACHE_NAME = "V1"
 
 var log=[];
-console.old = console.log
-console.log = function(msg) {
+z = console.log
+console.log = function(msg,z) {
   log.push(msg);
-  console.old(msg);
+  z(msg);
 }
 
 
-//make a pipeline out of special context for log messages. I dont have luxury of devtools on tiny mobile environment. 
+//make a pipeline out of special context for log messages. Doesnt work as far as I can tell.  For a brief moment the 'window.sw' assignment worked and I could toy with it. Unclear why it stopped. 
 self.addEventListener('message', messageEvent => {
   if (messageEvent.data === 'skipWaiting') return skipWaiting();
   if (messageEvent.data === 'getLog') return log;
@@ -20,31 +18,21 @@ self.addEventListener('message', messageEvent => {
 });
 
 //install 
-//ok! that explains why this was a wreck (does it?)
-//InstallEvent is apparently deprecated - even though 90% of browsers still support it. 
+//InstallEvent is apparently 'deprecated'
 //https://developer.mozilla.org/en-US/docs/Web/API/InstallEvent
 self.addEventListener("install", event => {
-    console.log('inside deprecated install event...exciting I guess')
-    //this is all hated on, but what the fuck? Otherwise, loading the PWA will just sit on the loading screen for up to a minute while the serviceworker decides to get its shit together.
+    console.log('[Service Worker] Inside deprecated install event...unclear what it even does...')
       self.skipWaiting();
-      caches.open(CACHE_NAME).then(cache=>console.log('cache '+CACHE_NAME+' opened.'))
-      //except that calls to cosole.log from here dont arrive, you have to be in the special devtools section to see them.
-/* this has been the point of failure for like 6 hrs.
-    event.waitUntil(
-        caches.open(CACHE_NAME).then(cache =>     cache.addAll(someFiles))
-  );
-*/
-
-  console.log("Service Worker installed?.");
+ caches.open(CACHE_NAME).then(cache=>console.log('[Service Worker] Cache '+CACHE_NAME+' opened.'))
 });
 
 
 //activate
 self.addEventListener("activate", event => {
-  console.log("Service Worker activating.");
+  console.log("[Service Worker] Activating...");
 });
 
-//fetch plan
+//fetch plan. This caches _everything and may be the source of the extreme minute-long start times? Still dont know.
 self.addEventListener("fetch", (e) => {
   e.respondWith(
     (async () => {
@@ -61,21 +49,3 @@ self.addEventListener("fetch", (e) => {
     })()
   );
 });
-
-
-
-/*
-self.addEventListener("fetch", event => {
-  // Cache-First Strategy
-  event.respondWith(
-    caches
-      .match(event.request) // check if the request has already been cached
-      .then(cached => cached || fetch(event.request)) // otherwise request network
-      .then(
-        response =>
-          cache(event.request, response) // put response in cache
-            .then(() => response) // resolve promise with the network response
-      )
-  );
-});
-*/
