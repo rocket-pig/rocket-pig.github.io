@@ -16,6 +16,7 @@
         "src": "icons/icon-512x512.png",
         "sizes": "512x512"
         },
+        {
         "src": "icons/logo.svg",
         "sizes": "513x513"
         }
