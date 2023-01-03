@@ -296,9 +296,7 @@ window.onload = function() {
   navigator.serviceWorker
     .register("./worker.js")
     .then(serviceWorker => {
-      console.log("Service Worker registered: ", serviceWorker);
-      
-      serviceWorker.update();
+      console.log("Service Worker registered: ", serviceWorker.update());
       
     })
     .catch(error => {
