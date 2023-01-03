@@ -162,7 +162,6 @@
 // "Controllers" area.
 window.myApp = {};
 document.addEventListener('init', function(event) {
-  var deferredPrompt;
   var page = event.target;
   if (page.id === 'indexPage') {
     //theme selector eventually:
@@ -317,7 +316,8 @@ window.onload = function() {
     });
 } else { console.log("Error: Service Workers not supported by this browser!") }
 
-//override the "install this app" toast
+//override the "install this app" toast. would be cool but im sick of battlling with scope of deferredPrompt. 
+/* 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -330,7 +330,7 @@ downloadButton.innerHTML = '<ons-icon icon="fa-download"></ons-icon>';
 
 document.querySelector('.right').appendChild(downloadButton)
 });
-
+*/
 
 
 function newCard(obj) {
