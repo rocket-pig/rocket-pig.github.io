@@ -1,7 +1,7 @@
 //apparently immediately pre caching entire app isnt going to work. No debug tool was telling me anything - finally I found this output at chrome://serviceworker-internals
 //"Error:{"columnNumber":-1,"lineNumber":-1,"message":"ServiceWorker startup timed out. The worker was in startup phase: Script streaming.","sourceURL":""}"
 
-const someFiles = ['/','/index.html']
+const someFiles = ['/index.html']
 const CACHE_NAME = "V1"
 
 
@@ -9,17 +9,15 @@ const CACHE_NAME = "V1"
 self.addEventListener("install", event => {
     console.log('inside install event.')
       //self.skipWaiting();
-
-// this has been the point of failure for like 6 hrs.
+      caches.open(CACHE_NAME).then(cache=>console.log(cache))
+      
+/* this has been the point of failure for like 6 hrs.
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache =>     cache.addAll(someFiles))
-        
-        
-        //.catch(err => { console.log("[Install] cache.addAll: "+err) })
   );
+*/
 
-
-  console.log("Service Worker installing.");
+  console.log("Service Worker installed?.");
 });
 
 
