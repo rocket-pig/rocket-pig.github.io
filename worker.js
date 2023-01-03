@@ -6,6 +6,8 @@ const CACHE_NAME = "V1"
 
 
 //install 
+//ok! that explains why this was a wreck (does it?)
+//https://developer.mozilla.org/en-US/docs/Web/API/InstallEvent
 self.addEventListener("install", event => {
     console.log('inside install event.')
       //self.skipWaiting();

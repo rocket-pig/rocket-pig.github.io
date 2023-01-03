@@ -289,19 +289,42 @@ function getpt(timestamp) {
 }
 
 
+/////////////////////////////////////////////
+
+/////////////////////////////////////////////
+
+/////////////////////////////////////////////
+
 //notice everything below is inside window.onload.
 window.onload = function() {
     
     if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .register("./worker.js")
-    .then(serviceWorker => { serviceWorker.update().then(e=>console.log(e))
+    .then(serviceWorker => { 
+        serviceWorker.update()
+        // debug stuff, report changes
+        serviceWorker.oncontrollerchange = () => {
+    console.log(
+      "[Service Worker] controller is now:",
+      serviceWorker.controller
+    )};
     })
     .catch(error => {
       console.error("Error registering and updating the Service Worker: ", error);
     });
-}
-    
+} else { console.log("Error: Service Workers not supported by this browser!") }
+
+// Initialize deferredPrompt for use later to show browser install prompt.
+let deferredPrompt;
+//override the "install this app" toast
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  newCard({text:"Your device is compatible with this app: Click the 3-dots menu in upper right corner, then click 'Install App' (or similar) to install.",myID: "announce",lt:Date.now()})
+  console.log(`'beforeinstallprompt' event was fired.`);
+});
+
 
 function newCard(obj) {
     let data = obj.text
