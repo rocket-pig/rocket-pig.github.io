@@ -302,16 +302,15 @@ window.onload = function() {
   navigator.serviceWorker
     .register("./worker.js")
     .then(serviceWorker => { 
-        //check for new version of worker.js
-        serviceWorker.update();
         //save a ref to it for postMessage
         window.sw = serviceWorker;
         // register for changes notification
         serviceWorker.oncontrollerchange = () => {
     console.log(
       "[Service Worker] controller is now:",
-      serviceWorker.controller
-    )};
+      serviceWorker.controller);
+      window.sw = serviceWorker
+    };
     })
     .catch(error => {
       console.error("Error registering and updating the Service Worker: ", error);
