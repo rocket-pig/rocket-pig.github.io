@@ -13,7 +13,7 @@ console.log = function(msg) {
 
 
 //make a pipeline out of special context for log messages. I dont have luxury of devtools on tiny mobile environment. 
-addEventListener('message', messageEvent => {
+self.addEventListener('message', messageEvent => {
   if (messageEvent.data === 'skipWaiting') return skipWaiting();
   if (messageEvent.data === 'getLog') return log;
   
