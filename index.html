@@ -317,7 +317,7 @@ window.onload = function() {
 } else { console.log("Error: Service Workers not supported by this browser!") }
 
  
-let deferredPrompt;
+var deferredPrompt;
 //override the "install this app" toast
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
