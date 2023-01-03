@@ -302,8 +302,9 @@ window.onload = function() {
   navigator.serviceWorker
     .register("./worker.js")
     .then(serviceWorker => { 
+        //check for new version of worker.js
         serviceWorker.update()
-        // debug stuff, report changes
+        // register for changes notification
         serviceWorker.oncontrollerchange = () => {
     console.log(
       "[Service Worker] controller is now:",
@@ -315,15 +316,20 @@ window.onload = function() {
     });
 } else { console.log("Error: Service Workers not supported by this browser!") }
 
-// Initialize deferredPrompt for use later to show browser install prompt.
+ 
 let deferredPrompt;
 //override the "install this app" toast
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  newCard({text:"Your device is compatible with this app: Click the 3-dots menu in upper right corner, then click 'Install App' (or similar) to install.",myID: "announce",lt:Date.now()})
-  console.log(`'beforeinstallprompt' event was fired.`);
+  console.log(`'beforeinstallprompt' event fired, toast suppressed. `);
+//show download button in appbar
+let downloadButton = document.createElement("ons-toolbar-button")
+downloadButton.setAttribute("onclick", "deferredPrompt.prompt()")
+downloadButton.icon="fa-download"
+document.querySelector('.right').appendChild(downloadButton)
 });
+
 
 
 function newCard(obj) {
@@ -341,6 +347,7 @@ function newCard(obj) {
     if(obj.myID == "announce"){
         title.innerHTML=""
         me.style.fontStyle = "italic"
+        obj.pt=""
         } else {
     title.innerHTML=obj.myID }
     let content = document.createElement("div")
