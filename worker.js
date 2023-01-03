@@ -4,6 +4,20 @@
 const someFiles = ['/index.html']
 const CACHE_NAME = "V1"
 
+var log;
+console.old = console.log
+console.log = function(msg) {
+  log.push(msg);
+  console.old(msg);
+}
+
+
+//make a pipeline out of special context for log messages. I dont have luxury of devtools on tiny mobile environment. 
+addEventListener('message', messageEvent => {
+  if (messageEvent.data === 'skipWaiting') return skipWaiting();
+  if (messageEvent.data === 'getLog') return log;
+  
+});
 
 //install 
 //ok! that explains why this was a wreck (does it?)
@@ -13,7 +27,7 @@ self.addEventListener("install", event => {
     console.log('inside deprecated install event...exciting I guess')
     //this is all hated on, but what the fuck? Otherwise, loading the PWA will just sit on the loading screen for up to a minute while the serviceworker decides to get its shit together.
       self.skipWaiting();
-      caches.open(CACHE_NAME).then(cache=>console.log(cache))
+      caches.open(CACHE_NAME).then(cache=>console.log('cache '+CACHE_NAME+' opened.'))
       //except that calls to cosole.log from here dont arrive, you have to be in the special devtools section to see them.
 /* this has been the point of failure for like 6 hrs.
     event.waitUntil(
