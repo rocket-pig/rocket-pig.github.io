@@ -6,7 +6,7 @@
   "start_url": "https://rocket-pig.github.io/",
   "display": "standalone",
   "scope": ".",
-  "background": "#000000",
+  "background": "#000",
   "icons": [
         {
         "src": "icons/icon-192x192.png",
