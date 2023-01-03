@@ -62,6 +62,13 @@
         "sizes": "512x512",
         "type": "image/png",
         "purpose": "maskable any"
-        }
+        },
+        "src": "icons/logo.svg",
+        "sizes": "513x513",
+        "type": "image/svg",
+        "purpose": "maskable any"
+        },
+        
+        
 ]
 }
