@@ -317,7 +317,7 @@ window.onload = function() {
 } else { console.log("Error: Service Workers not supported by this browser!") }
 
  
-var deferredPrompt;
+var window.deferredPrompt;
 //override the "install this app" toast
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -325,7 +325,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   console.log(`'beforeinstallprompt' event fired, toast suppressed. `);
 //show download button in appbar
 let downloadButton = document.createElement("ons-toolbar-button")
-downloadButton.setAttribute("onclick", "deferredPrompt.prompt()")
+downloadButton.setAttribute("onclick", "deferredPrompt.prompt(); ")
 downloadButton.icon="fa-download"
 downloadButton.innerHTML = '<ons-icon icon="fa-download"></ons-icon>';
 
