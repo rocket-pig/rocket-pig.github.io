@@ -327,6 +327,8 @@ window.addEventListener('beforeinstallprompt', (e) => {
 let downloadButton = document.createElement("ons-toolbar-button")
 downloadButton.setAttribute("onclick", "deferredPrompt.prompt()")
 downloadButton.icon="fa-download"
+downloadButton.innerHTML = '<ons-icon icon="fa-download"></ons-icon>';
+
 document.querySelector('.right').appendChild(downloadButton)
 });
 
