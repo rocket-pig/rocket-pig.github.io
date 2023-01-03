@@ -97,7 +97,7 @@
 
 <script>
     function createRoomCallback(){
-        let vars = [appID, myID, roomID, password];
+        let vars = ['appID', 'myID', 'roomID', 'password'];
         for(let i of vars) {
             localStorage.setItem(i,document.querySelector("#"+i).value)
         }
