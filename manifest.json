@@ -2,7 +2,7 @@
   "name": "Hullo",
   "short_name": "Hullo",
   "lang": "en",
-  "start_url": "/",
+  "start_url": "https://rocket-pig.github.io/",
   "display": "standalone",
   "icons": [
     {
