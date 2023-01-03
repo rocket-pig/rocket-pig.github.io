@@ -4,7 +4,7 @@
 const someFiles = ['/index.html']
 const CACHE_NAME = "V1"
 
-var log;
+var log=[];
 console.old = console.log
 console.log = function(msg) {
   log.push(msg);
