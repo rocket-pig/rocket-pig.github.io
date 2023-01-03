@@ -1,9 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
   "name": "Hullo",
   "short_name": "Hullo",
+  "description": "Serverless P2P instant messaging PWA over webRTC, using BitTorrent websockets",
   "lang": "en",
   "start_url": "https://rocket-pig.github.io/",
   "display": "standalone",
+  "scope": ".",
+  "background": "#000000",
   "icons": [
     {
       "src": "icons/logo-192.png",
