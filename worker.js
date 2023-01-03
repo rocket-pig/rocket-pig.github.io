@@ -7,12 +7,14 @@ const CACHE_NAME = "V1"
 
 //install 
 //ok! that explains why this was a wreck (does it?)
+//InstallEvent is apparently deprecated - even though 90% of browsers still support it. 
 //https://developer.mozilla.org/en-US/docs/Web/API/InstallEvent
 self.addEventListener("install", event => {
-    console.log('inside install event.')
-      //self.skipWaiting();
+    console.log('inside deprecated install event...exciting I guess')
+    //this is all hated on, but what the fuck? Otherwise, loading the PWA will just sit on the loading screen for up to a minute while the serviceworker decides to get its shit together.
+      self.skipWaiting();
       caches.open(CACHE_NAME).then(cache=>console.log(cache))
-      
+      //except that calls to cosole.log from here dont arrive, you have to be in the special devtools section to see them.
 /* this has been the point of failure for like 6 hrs.
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache =>     cache.addAll(someFiles))
