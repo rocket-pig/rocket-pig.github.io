@@ -11,7 +11,7 @@ self.addEventListener("install", event => {
       self.skipWaiting();
 
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache =>     cache.addAll(someFiles))
+        caches.open(CACHE_NAME).then(cache =>     cache.addAll(someFiles)).catch(err => { console.log("[Install] cache.addAll: "+err) })
   );
 
   console.log("Service Worker installing.");
