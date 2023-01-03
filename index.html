@@ -302,8 +302,10 @@ window.onload = function() {
   navigator.serviceWorker
     .register("./worker.js")
     .then(serviceWorker => { 
-        //check for new version of worker.js, which i think is casuing thee indefinite hangs? how is this 2022 technology. 20 hours into using serviceWorkers and it all feels like QBasic
-        //serviceWorker.update()
+        //check for new version of worker.js
+        serviceWorker.update();
+        //save a ref to it for postMessage
+        window.sw = serviceWorker;
         // register for changes notification
         serviceWorker.oncontrollerchange = () => {
     console.log(
