@@ -309,7 +309,8 @@ window.onload = function() {
     window.sw = serviceWorker.active;
     };    
     //receive msg from serviceWorker. only works if you ref navigator, not our returned instance. notacluewhy.
-    navigator.serviceWorker.addEventListener("message", (event) => { console.log('[Service Worker]: '+event.data) });
+    navigator.serviceWorker.addEventListener("message", (event) => { console.log(event.data) });
+    serviceWorker.active.postMessage('ping');
         }).catch(error => {
       console.error("Error registering and updating the Service Worker: ", error);
     });
