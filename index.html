@@ -447,14 +447,6 @@ function joincallback(thisPeer) {
 
 room.onPeerJoin((thisPeer) => {joincallback(thisPeer)})
 
-
-room.onPeerLeave(peerId => {
-    //announce
-    newCard({text:nombre+" ["+peerID+"] leaves...",pt:getPrettyTimeStamp(), myID:"announce"})
-});
-
-
-
 // listen for peers naming themselves
 const idsToNames = {}
 getName((name, peerId) => {
@@ -462,6 +454,15 @@ getName((name, peerId) => {
     //announce
     newCard({text:"Peering with "+name+" ["+peerId+"]...",pt:getPrettyTimeStamp(), myID:"announce"})
 })
+
+
+
+room.onPeerLeave(peerId => {
+    //announce
+    nombre = idsToNames[peerId] ? idsToNames[peerId] : 'unknown'
+    newCard({text:nombre+" ["+peerID+"] leaves...",pt:getPrettyTimeStamp(), myID:"announce"})
+});
+
 
 
 //we received a msg
