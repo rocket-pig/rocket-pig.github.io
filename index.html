@@ -302,18 +302,18 @@ window.onload = function() {
   navigator.serviceWorker
     .register("./worker.js")
     .then(serviceWorker => { 
-        //save a ref to it for postMessage
-        window.sw = serviceWorker;
-        // register for changes notification
-        serviceWorker.oncontrollerchange = () => {
-            console.log("[Service Worker] controller is now:",serviceWorker.controller);
-            window.sw = serviceWorker
-            };
-    })
-    .catch(error => {
+         serviceWorker.update();
+         window.sw = serviceWorker.active;
+    // register for changes notification
+    serviceWorker.oncontrollerchange = () => { console.log("[Service Worker] controller is now:",serviceWorker.controller);
+    window.sw = serviceWorker.active;
+    };    
+    //receive msg from serviceWorker. only works if you ref navigator, not our returned instance. notacluewhy.
+    navigator.serviceWorker.addEventListener("message", (event) => { console.log('[Service Worker]: '+event.data) });
+        }).catch(error => {
       console.error("Error registering and updating the Service Worker: ", error);
     });
-    } else { console.log("Error: Service Workers not supported by this browser!") }
+    };
 
 
 
