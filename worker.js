@@ -1,15 +1,20 @@
 
 const CACHE_NAME = "V1"
 
+var _clog = console.log;
 
 //logging. visible in eruda.
 function log(msg) {
-    console.log(msg); //not visible in eruda
+    _clog(msg); //not visible in eruda
     self.clients.matchAll({includeUncontrolled: true}).then((clientList) => {
         clientList.forEach((e) => {
             e.postMessage(msg) })
         })
     };    
+
+console.error = function(e){ log(e) };
+console.log = function(e){ log(e) };
+console.warning = function(e){ log(e) };
 
 //https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
 //https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/message_event
