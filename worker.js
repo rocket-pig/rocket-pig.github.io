@@ -6,7 +6,9 @@ const CACHE_NAME = "V1"
 function log(msg) {
     console.log(msg); //not visible in eruda
     self.clients.matchAll({includeUncontrolled: true}).then((clientList) => {
-    clientList[0].postMessage(msg) })
+        clientList.forEach((e) => {
+            e.postMessage(msg) })
+        })
     };    
 
 //https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
