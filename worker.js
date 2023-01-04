@@ -1,15 +1,31 @@
 
+/*
+TODO: i may want to set up the other messaging channel
+
+TODO: either new onevent, or a onmessage that adds (and another that removes)  a peer to the ping list
+a ping function that polls every N seconds. the 
+response can just be discarded (?)
+in main, onPeerJoin and onPeerLeave will trigger the
+message pass to worker
+
+
+
+*/
+
+
 const CACHE_NAME = "V1"
 
 var _clog = console.log;
 
 //logging. visible in eruda.
 function log(msg) {
-    _clog(msg); //not visible in eruda
-    self.clients.matchAll({includeUncontrolled: true}).then((clientList) => {
-        clientList.forEach((e) => {
-            e.postMessage(msg) })
-        })
+    (async () => {
+        _clog(msg); //not visible in eruda
+        self.clients.matchAll({includeUncontrolled: true}).then((clientList) => {
+            clientList.forEach((e) => {
+                e.postMessage(msg) })
+            })
+     })()
     };    
 
 console.error = function(e){ log(e) };
@@ -23,7 +39,11 @@ self.onmessage = function handleMsgfromMain(messageEvent) {
     if (messageEvent.data === 'ping'){ 
         console.log('[Client] '+messageEvent.data);
         messageEvent.source.postMessage('[Service Worker] pong'); 
+        };
+    if (messageEvent.data === 'test') {
+        messageEvent.source.postMessage('[Service Worker] test loop init')
         }
+        
     }; 
 
 //install 

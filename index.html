@@ -162,6 +162,9 @@
 // "Controllers" area.
 window.myApp = {};
 document.addEventListener('init', function(event) {
+
+    
+    
   var page = event.target;
   if (page.id === 'indexPage') {
     //theme selector eventually:
@@ -298,24 +301,36 @@ function getpt(timestamp) {
 //notice everything below is inside window.onload.
 window.onload = function() {
     
-    if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("./worker.js")
-    .then(serviceWorker => { 
-         serviceWorker.update();
-         window.sw = serviceWorker.active;
-    // register for changes notification
-    serviceWorker.oncontrollerchange = () => { console.log("[Service Worker] controller is now:",serviceWorker.controller);
-    window.sw = serviceWorker.active;
-    };    
-    //receive msg from serviceWorker. only works if you ref navigator, not our returned instance. notacluewhy.
-    navigator.serviceWorker.addEventListener("message", (event) => { console.log(event.data) });
-    serviceWorker.active.postMessage('ping');
-        }).catch(error => {
-      console.error("Error registering and updating the Service Worker: ", error);
-    });
-    };
+        
+navigator.serviceWorker.addEventListener("message", (event) => { console.log(event.data) });
 
+navigator.serviceWorker.register("./worker.js").then((sw) => {
+    sw.update();
+    console.log('sw registered and updated.')
+    window.sw =  sw;
+    sw.active.postMessage('ping');
+    })
+
+
+
+//messaging is still so ridiculous. Constantly moving 
+//target of FIVE! different places that 'postMessage' 
+//method exists, and its just a guess every time which 
+//one will work. Heres the list:
+// sw.postMessage
+// sw.active.postMessage
+// navigator.serviceWorker.postMessage
+// navigator.serviceWorker.active.postMessage
+// navigator.serviceWorker.controller.postMessage
+// _ALL_ of which switch between working, returning 
+//only 'null' and doing nothing, and 'throwing'. AND on 
+//top of that, the worker side gives up on being able 
+//to return responses/forward console.log after a 
+//while, though it does wake up from stopped state and 
+//react to the 'ping' onmessage event, visible in the 
+//chrome://serviceworker-internals page.
+
+//AND YEP! following day, nothing changed, and the init messages that were passing fine yest no longer pass. CHANGED IN MY SLEEP. and nothing I fiddle around gets them to appear again. TWELVE FUCKING HOURS on it yesterday and am still nowhere. 
 
 
 function newCard(obj) {
