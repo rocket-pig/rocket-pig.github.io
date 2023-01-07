@@ -8,10 +8,8 @@ response can just be discarded (?)
 in main, onPeerJoin and onPeerLeave will trigger the
 message pass to worker
 
-
-
+..multiple problems arise - we dont have access to trystero without moving the import of it here. We have to ...entirely rewrite our interface with it to be running in serviceWorker's context, who forwards msgs back and forth to/from main via...the dodgy-as-fuck postMessage system? ..
 */
-
 
 const CACHE_NAME = "V1"
 
@@ -20,7 +18,7 @@ var _clog = console.log;
 //logging. visible in eruda.
 function log(msg) {
     (async () => {
-        _clog(msg); //not visible in eruda
+        _clog(msg); //chrome://serviceworker-internals 
         self.clients.matchAll({includeUncontrolled: true}).then((clientList) => {
             clientList.forEach((e) => {
                 e.postMessage(msg) })
@@ -40,11 +38,17 @@ self.onmessage = function handleMsgfromMain(messageEvent) {
         console.log('[Client] '+messageEvent.data);
         messageEvent.source.postMessage('[Service Worker] pong'); 
         };
-    if (messageEvent.data === 'test') {
-        messageEvent.source.postMessage('[Service Worker] test loop init')
-        }
+};
         
-    }; 
+       
+self.onsync = function onSync(event){
+        if(event.tag == "tag") {       
+            //event.source.postMessage('[Service Worker] prime loop init');
+            log('[Service Worker] prime loop init');
+        event.waitUntil(primeTime());
+        }
+};
+ 
 
 //install 
 //InstallEvent is apparently 'deprecated'
@@ -78,3 +82,34 @@ self.addEventListener("fetch", (e) => {
     })()
   );
 });
+
+
+
+
+function primeTime() {
+  let primes = [];
+let num = 2;
+let amts = [10,100,1000,2000,5000,10000,20000,50000,75000,90000,120000]
+  
+  return new Promise((resolve, reject) => {
+    let s=Date.now()
+    for(let a of amts) {
+      while (primes.length < a) {
+        let isPrime = true;
+        for (let i = 0; i < primes.length; i++) {
+          if (num % primes[i] === 0) {
+            isPrime = false;
+            break;
+          }
+        }
+        if (isPrime) {
+          primes.push(num);
+        }
+        num++;
+      }
+      let e = Date.now()
+      log((e-s)/1000+" seconds to calculate "+a+" primes" );
+      resolve(primes.length);
+    }
+  });
+}

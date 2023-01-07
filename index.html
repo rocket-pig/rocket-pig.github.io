@@ -29,6 +29,8 @@
 <script src="/lib/pica.min.js"></script>
 <script src="/lib/image-blob-reduce.min.js"></script>
 
+<link rel="stylesheet" href="/mystyles.css">
+
 <link id="maintheme" rel="stylesheet" href="/lib/onsen/css/dark-onsen-css-components.css">
 
 <link rel="stylesheet" href="/lib/onsen/css/material-design-iconic-font/css/material-design-iconic-font.css">
@@ -58,7 +60,7 @@
 <template id="index.html"> <!-- main view-->
 
 
-<ons-page id="indexPage">
+<ons-page id="indexPage" modifier="mystyles">
 <ons-toolbar class="toolbar">
   <div class="left toolbar__left">
         <ons-toolbar-button id="menu_button">
@@ -152,7 +154,6 @@
 </p>
 </div>
 </ons-dialog>
-
 
 
 
@@ -301,17 +302,39 @@ function getpt(timestamp) {
 //notice everything below is inside window.onload.
 window.onload = function() {
     
+//EVERY modern browser has serviceWorker, quit the messin around and just mount up.
         
 navigator.serviceWorker.addEventListener("message", (event) => { console.log(event.data) });
 
-navigator.serviceWorker.register("./worker.js").then((sw) => {
-    sw.update();
-    console.log('sw registered and updated.')
-    window.sw =  sw;
-    sw.active.postMessage('ping');
-    })
+
+if(navigator.serviceWorker) {
+        navigator.serviceWorker.register('./worker.js')
+        .then(function() {
+            
+            return navigator.serviceWorker.ready
+        })
+        .then(function(registration) {
+            registration.update();
+            window.sw = registration;
+            sw.active.postMessage('ping')
+})
+
+};      
 
 
+//register for noisifications
+
+Notification.requestPermission(permission => {
+		if (permission === 'granted'){
+		
+    navigator.serviceWorker.ready.then(registration => registration.sync.register('tag').then(() => console.log("Registered background sync"))
+    .catch(err => console.error("Error registering background sync", err)))
+		 }
+		else console.error("Permission was not granted.")
+	})
+//*/	
+	
+	
 
 //messaging is still so ridiculous. Constantly moving 
 //target of FIVE! different places that 'postMessage' 
@@ -328,9 +351,9 @@ navigator.serviceWorker.register("./worker.js").then((sw) => {
 //to return responses/forward console.log after a 
 //while, though it does wake up from stopped state and 
 //react to the 'ping' onmessage event, visible in the 
-//chrome://serviceworker-internals page.
+//chrome://serviceworker-internals page but no longer passed via log() out to console.
 
-//AND YEP! following day, nothing changed, and the init messages that were passing fine yest no longer pass. CHANGED IN MY SLEEP. and nothing I fiddle around gets them to appear again. TWELVE FUCKING HOURS on it yesterday and am still nowhere. 
+//AND YEP! following day, nothing changed, and the init messages that were passing fine yest no longer pass. CHANGED IN MY SLEEP. ...  Later on: I wrap the guts of 'log()' in an IEAF async, et voila works again.  sigh, this is fun but im also super lost.
 
 
 function newCard(obj) {
@@ -402,31 +425,39 @@ newCard({text:"Hullo. This is the default, unencrypted waiting room. Click the s
 //take these out later:
 window.sendText = sendText
 
-function send(msg,img=false){
+function send(msg, img = false) {
     if (localStorage.myID === undefined) {
         let myID = "unnamed";
-    } else { let myID = localStorage.myID }
-    
-    newCard({text:msg,pt:getPrettyTimeStamp(),myID:myID,img:img})
+    } else {
+        let myID = localStorage.myID
+    }
+
+    newCard({
+        text: msg,
+        pt: getPrettyTimeStamp(),
+        myID: myID,
+        img: img
+    })
     let lt = Date.now()
     let obj = {
-    text: msg, 
-    myID: myID,
-    roomID: roomID,
-    pt: getPrettyTimeStamp(),
-    lt: lt,
-    img:img
+        text: msg,
+        myID: myID,
+        roomID: roomID,
+        pt: getPrettyTimeStamp(),
+        lt: lt,
+        img: img
     }
-    
-    localStorage.setItem('text_'+obj.roomID+'_'+obj.lt,JSON.stringify(obj))
-    for(let id of room.getPeers()){
-        if(id != 0) {
+
+    localStorage.setItem('text_' + obj.roomID + '_' + obj.lt, JSON.stringify(obj))
+    for (let id of room.getPeers()) {
+        if (id != 0) {
             //console.log('sending ['+msg+'] to id: '+id)
-        sendText(obj,id)
+            sendText(obj, id)
         }
     }
 
 } //end of send
+
 
 //take these out later
 window.room = room
@@ -526,6 +557,7 @@ document.getElementById('uploader').addEventListener('change', function () {
             reader.readAsDataURL(blob);
             reader.onload = function(e) {
               let dURL = reader.result;
+              localStorage.setItem('last_durl',dURL)
               send(dURL,true)
             }
         });
@@ -533,6 +565,8 @@ document.getElementById('uploader').addEventListener('change', function () {
 
 })();
 
+//doesnt work.
+//document.querySelector('.page--mystyles__background').style['background-image']='url('+localStorage.getItem("last_durl")+')'
 
 } //end of window.onload
 
