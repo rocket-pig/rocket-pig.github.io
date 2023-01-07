@@ -332,6 +332,10 @@ Notification.requestPermission(permission => {
 		 }
 		else console.error("Permission was not granted.")
 	})
+	
+	//check status
+	navigator.permissions.query({ name: "periodic-background-sync" }).then((status)=>{ console.log(status)})
+	
 //*/	
 	
 	

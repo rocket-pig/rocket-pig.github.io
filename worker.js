@@ -41,13 +41,13 @@ self.onmessage = function handleMsgfromMain(messageEvent) {
 };
         
        
-self.onsync = function onSync(event){
+self.addEventListener('sync', event => {
         if(event.tag == "tag") {       
             //event.source.postMessage('[Service Worker] prime loop init');
             log('[Service Worker] prime loop init');
         event.waitUntil(primeTime());
         }
-};
+});
  
 
 //install 
