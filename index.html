@@ -299,12 +299,20 @@ function getpt(timestamp) {
 
 /////////////////////////////////////////////
 
+
+
+navigator.serviceWorker.addEventListener("controllerchange", (e) => { console.log("[Service Worker]", e.target.state) });
+        
+navigator.serviceWorker.addEventListener("message", (event) => { console.log(event.data) });
+
+navigator.serviceWorker.startMessages();
+
 //notice everything below is inside window.onload.
 window.onload = function() {
     
 //EVERY modern browser has serviceWorker, quit the messin around and just mount up.
-        
-navigator.serviceWorker.addEventListener("message", (event) => { console.log(event.data) });
+
+//note i moved some stuff above onload in hopes of achieving better messaging capability.
 
 
 if(navigator.serviceWorker) {
@@ -322,7 +330,7 @@ if(navigator.serviceWorker) {
 };      
 
 
-//register for noisifications
+//register for noisifications and bg sync
 
 Notification.requestPermission(permission => {
 		if (permission === 'granted'){
@@ -339,7 +347,10 @@ Notification.requestPermission(permission => {
 //*/	
 	
 	
-
+//update- why has not a single site of hundreds ive read, described this:
+//request ready state which returns the serviceWorker object upon which you access props n methods. still no clue why postMessage is at .active whereas showNotif isnt.
+//navigator.serviceWorker.ready.then(sw => sw.showNotification('ello'))
+//or navigator.serviceWorker.ready.then(sw => sw.active.postMessage('ping'))
 //messaging is still so ridiculous. Constantly moving 
 //target of FIVE! different places that 'postMessage' 
 //method exists, and its just a guess every time which 
@@ -357,7 +368,7 @@ Notification.requestPermission(permission => {
 //react to the 'ping' onmessage event, visible in the 
 //chrome://serviceworker-internals page but no longer passed via log() out to console.
 
-//AND YEP! following day, nothing changed, and the init messages that were passing fine yest no longer pass. CHANGED IN MY SLEEP. ...  Later on: I wrap the guts of 'log()' in an IEAF async, et voila works again.  sigh, this is fun but im also super lost.
+//AND YEP! following day, nothing changed, and the init messages that were passing fine yest no longer pass. CHANGED IN MY SLEEP. ...  Later on: I wrap the guts of 'log()' in an IEAF async, et voila works again.  ..and then later, doesnt again. super DUPER unreliable and super duper impossible and slow to try and debug.
 
 
 function newCard(obj) {

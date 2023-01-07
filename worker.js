@@ -45,9 +45,22 @@ self.addEventListener('sync', event => {
         if(event.tag == "tag") {       
             //event.source.postMessage('[Service Worker] prime loop init');
             log('[Service Worker] prime loop init');
-        event.waitUntil(primeTime());
+        event.waitUntil(fetchDogImage());
         }
 });
+ 
+function fetchDogImage () {
+    fetch('./icons/logo.svg')
+      .then(function (response) {
+        return response;
+      })
+      .then(function (text) {
+        console.log('Request successful', text);
+      })
+      .catch(function (error) {
+        console.log('Request failed', error);
+      });
+  } 
  
 
 //install 
