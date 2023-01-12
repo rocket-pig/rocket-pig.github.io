@@ -1,4 +1,4 @@
-# rocket-pig.github.io
+# 'Hullo'
 [Hullo PWA](https://rocket-pig.github.io) <--click here to run!
 
 __E2E Encrypted__, *serverless p2p* messaging using bittorrent websockets (thanks entirely to
@@ -27,3 +27,5 @@ bittorrent trackers to find any peers, then WebRTC to link di-rectly.
 
 If the install popup doesnt show or you dismiss it, the install feature can be found again
 in the 'three-dots' menu, usually upper right.
+
+(...yah, i could have come up with a better name, Im not a 'branding' person much)
